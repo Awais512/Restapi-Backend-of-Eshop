@@ -7,12 +7,11 @@ const cors = require('cors');
 require('dotenv/config');
 
 app.use(cors());
-app.options('*', cors())
+app.options('*', cors());
 
 //middleware
 app.use(bodyParser.json());
 app.use(morgan('tiny'));
-
 
 //Routes
 const categoriesRoutes = require('./routes/categories');
@@ -28,20 +27,21 @@ app.use(`${api}/users`, usersRoutes);
 app.use(`${api}/orders`, ordersRoutes);
 
 //Database
-mongoose.connect(process.env.CONNECTION_STRING, {
+mongoose
+  .connect(process.env.CONNECTION_STRING, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    dbName: 'eshop-database'
-})
-.then(()=>{
-    console.log('Database Connection is ready...')
-})
-.catch((err)=> {
+    useFindAndModify: false,
+    dbName: 'eshop-database',
+  })
+  .then(() => {
+    console.log('Database Connection is ready...');
+  })
+  .catch((err) => {
     console.log(err);
-})
+  });
 
 //Server
-app.listen(3000, ()=>{
-
-    console.log('server is running http://localhost:3000');
-})
+app.listen(3000, () => {
+  console.log('server is running http://localhost:3000');
+});
