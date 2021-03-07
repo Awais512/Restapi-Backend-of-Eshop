@@ -51,3 +51,20 @@ exports.deleteCategory = async (req, res) => {
     console.log(error);
   }
 };
+
+//@desc     Get Single  Category
+//@route    GET /api/v1/categories/:id
+//@access   PUBLIC
+exports.getCategory = async (req, res) => {
+  try {
+    let category = await Category.findById(req.params.id);
+    if (!category) {
+      return res.status(404).json({ msg: 'Category does not exist' });
+    }
+
+    res.status(200).json({ success: true, category });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err });
+    console.log(error);
+  }
+};
