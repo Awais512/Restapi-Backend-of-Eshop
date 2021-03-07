@@ -68,3 +68,28 @@ exports.getCategory = async (req, res) => {
     console.log(error);
   }
 };
+
+//@desc     Update Category
+//@route    PUT /api/v1/categories/:id
+//@access   PRIVATE
+exports.updateCategory = async (req, res) => {
+  try {
+    let category = await Category.findByIdAndUpdate(
+      req.params.id,
+      {
+        name: req.body.name,
+        icon: req.body.icon,
+        color: req.body.color,
+      },
+      { new: true }
+    );
+    if (!category) {
+      return res.status(404).json({ msg: 'Category does not exist' });
+    }
+
+    res.status(200).send(category);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err });
+    console.log(error);
+  }
+};
