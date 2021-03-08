@@ -41,7 +41,7 @@ exports.createProduct = async (req, res) => {
 
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.find({});
+    const products = await Product.find({}).populate('category');
     if (products.length === 0) {
       return res
         .status(400)
@@ -61,7 +61,7 @@ exports.getProducts = async (req, res) => {
 
 exports.getProduct = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id).populate('category');
     if (!product) {
       return res.status(400).send('Product does not exist');
     }
