@@ -1,5 +1,6 @@
 const { Product } = require('../models/product');
 const { Category } = require('../models/category');
+const mongoose = require('mongoose');
 
 //@desc     Create Product
 //@route    POST /api/v1/products
@@ -78,6 +79,9 @@ exports.getProduct = async (req, res) => {
 //@access   PRIVATE
 exports.updateProduct = async (req, res) => {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(400).send('Invalid product id');
+    }
     let category = await Category.findById(req.body.category);
     if (!category) return res.status(400).send('Invalid Category');
     let product = await Product.findByIdAndUpdate(
@@ -113,6 +117,9 @@ exports.updateProduct = async (req, res) => {
 //@access   PRIVATE
 exports.deleteProduct = async (req, res) => {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(400).send('Invalid product id');
+    }
     let product = await Product.findByIdAndRemove(req.params.id);
     if (!product) {
       return res.status(404).json({ msg: 'Product does not exist' });
