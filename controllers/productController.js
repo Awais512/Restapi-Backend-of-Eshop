@@ -72,3 +72,55 @@ exports.getProduct = async (req, res) => {
     res.status(500).json({ success: false, error: err });
   }
 };
+
+//@desc     Update Product
+//@route    PUT /api/v1/products/:id
+//@access   PRIVATE
+exports.updateProduct = async (req, res) => {
+  try {
+    let category = await Category.findById(req.body.category);
+    if (!category) return res.status(400).send('Invalid Category');
+    let product = await Product.findByIdAndUpdate(
+      req.params.id,
+      {
+        name: req.body.name,
+        description: req.body.description,
+        richDescription: req.body.richDescription,
+        image: req.body.image,
+        brand: req.body.brand,
+        price: req.body.price,
+        category: req.body.category,
+        countInStock: req.body.countInStock,
+        rating: req.body.rating,
+        numReviews: req.body.numReviews,
+        isFeatured: req.body.isFeatured,
+      },
+      { new: true }
+    );
+    if (!product) {
+      return res.status(404).json({ msg: 'Product does not exist' });
+    }
+
+    res.status(200).send(product);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err });
+    console.log(error);
+  }
+};
+
+//@desc     Delete  Product
+//@route    DELETE /api/v1/products/:id
+//@access   PRIVATE
+exports.deleteProduct = async (req, res) => {
+  try {
+    let product = await Product.findByIdAndRemove(req.params.id);
+    if (!product) {
+      return res.status(404).json({ msg: 'Product does not exist' });
+    }
+
+    res.status(200).json({ success: true, msg: 'Product deleted!' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err });
+    console.log(error);
+  }
+};
