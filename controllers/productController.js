@@ -42,12 +42,16 @@ exports.createProduct = async (req, res) => {
 
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.find({}).populate('category');
-    if (products.length === 0) {
-      return res
-        .status(400)
-        .send('Currently we do not have products in our database');
+    let filter = {};
+    if (req.query.categories) {
+      filter = { category: req.query.categories.split(',') };
     }
+    const products = await Product.find(filter).populate('category');
+    // if (products.length === 0) {
+    //   return res
+    //     .status(400)
+    //     .send('Currently we do not have products in our database');
+    // }
 
     res.status(200).json({ count: products.length, data: products });
   } catch (err) {
