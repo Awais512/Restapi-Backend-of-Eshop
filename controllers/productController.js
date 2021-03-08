@@ -131,3 +131,21 @@ exports.deleteProduct = async (req, res) => {
     console.log(error);
   }
 };
+
+//@desc     Get Count of Products
+//@route    GET /api/v1/products/get/count
+//@access   PUBLIC
+
+exports.getProductCount = async (req, res) => {
+  try {
+    const productCount = await Product.countDocuments((count) => count);
+    if (!productCount) {
+      return res.status(400).send('Product does not exist');
+    }
+
+    res.status(200).json({ count: productCount });
+  } catch (error) {
+    console.log(err);
+    res.status(500).json({ success: false, error: err });
+  }
+};
