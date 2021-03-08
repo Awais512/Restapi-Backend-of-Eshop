@@ -50,7 +50,7 @@ exports.getProducts = async (req, res) => {
     }
 
     res.status(200).json({ count: products.length, data: products });
-  } catch (error) {
+  } catch (err) {
     console.log(err);
     res.status(500).json({ success: false, error: err });
   }
@@ -68,7 +68,7 @@ exports.getProduct = async (req, res) => {
     }
 
     res.status(200).json(product);
-  } catch (error) {
+  } catch (err) {
     console.log(err);
     res.status(500).json({ success: false, error: err });
   }
@@ -108,7 +108,7 @@ exports.updateProduct = async (req, res) => {
     res.status(200).send(product);
   } catch (err) {
     res.status(500).json({ success: false, error: err });
-    console.log(error);
+    console.log(err);
   }
 };
 
@@ -128,7 +128,7 @@ exports.deleteProduct = async (req, res) => {
     res.status(200).json({ success: true, msg: 'Product deleted!' });
   } catch (err) {
     res.status(500).json({ success: false, error: err });
-    console.log(error);
+    console.log(err);
   }
 };
 
@@ -144,7 +144,28 @@ exports.getProductCount = async (req, res) => {
     }
 
     res.status(200).json({ count: productCount });
-  } catch (error) {
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false, error: err });
+  }
+};
+
+//@desc     Get feature Products
+//@route    GET /api/v1/products/get/featured
+//@access   PUBLIC
+
+exports.getFeaturedProduct = async (req, res) => {
+  try {
+    const count = req.params.count ? req.params.count : 0;
+    const featuredProducts = await Product.find({ isFeatured: true }).limit(
+      +count
+    );
+    if (!featuredProducts) {
+      return res.status(400).send('Product does not exist');
+    }
+
+    res.status(200).send(featuredProducts);
+  } catch (err) {
     console.log(err);
     res.status(500).json({ success: false, error: err });
   }
