@@ -1,6 +1,10 @@
 const { Product } = require('../models/product');
 const { Category } = require('../models/category');
 
+//@desc     Create Product
+//@route    POST /api/v1/products
+//@access   PRIVATE
+
 exports.createProduct = async (req, res) => {
   try {
     let category = await Category.findById(req.body.category);
@@ -26,6 +30,44 @@ exports.createProduct = async (req, res) => {
     }
     res.status(201).send(product);
   } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false, error: err });
+  }
+};
+
+//@desc     Get all Products
+//@route    GET /api/v1/products
+//@access   PUBLIC
+
+exports.getProducts = async (req, res) => {
+  try {
+    const products = await Product.find({});
+    if (products.length === 0) {
+      return res
+        .status(400)
+        .send('Currently we do not have products in our database');
+    }
+
+    res.status(200).json({ count: products.length, data: products });
+  } catch (error) {
+    console.log(err);
+    res.status(500).json({ success: false, error: err });
+  }
+};
+
+//@desc     Get Single Products
+//@route    GET /api/v1/products/:id
+//@access   PUBLIC
+
+exports.getProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(400).send('Product does not exist');
+    }
+
+    res.status(200).json(product);
+  } catch (error) {
     console.log(err);
     res.status(500).json({ success: false, error: err });
   }
