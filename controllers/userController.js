@@ -31,3 +31,21 @@ exports.getUser = async (req, res) => {
     res.status(500).json({ success: false, error: err });
   }
 };
+
+//@desc     Get Count of Users
+//@route    GET /api/v1/users/get/count
+//@access   PUBLIC
+
+exports.getUserCount = async (req, res) => {
+  try {
+    const userCount = await User.countDocuments((count) => count);
+    if (!userCount) {
+      return res.status(404).send('User does not exist');
+    }
+
+    res.status(200).json({ count: userCount });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false, error: err });
+  }
+};
