@@ -35,16 +35,24 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
+    const secret = process.env.JWT_SECRET;
     if (!user) {
-      return res.status(404).send('User not found');
+      return res.status(400).send('The user not found');
     }
+
     if (user && bcrypt.compareSync(req.body.password, user.passwordHash)) {
-      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-        expiresIn: '7d',
-      });
+      const token = jwt.sign(
+        {
+          userId: user.id,
+          isAdmin: user.isAdmin,
+        },
+        secret,
+        { expiresIn: '1d' }
+      );
+
       res.status(200).send({ user: user.email, token: token });
     } else {
-      return res.status(400).send('Password does not match');
+      res.status(400).send('password is wrong!');
     }
   } catch (err) {
     console.log(err);
