@@ -5,7 +5,7 @@ const { User } = require('../models/user');
 //@access   Public
 exports.getUsers = async (req, res) => {
   try {
-    const users = await User.find().select('name phone email');
+    const users = await User.find().select('-passwordHash');
 
     res.status(200).json({ count: users.length, data: users });
   } catch (err) {
