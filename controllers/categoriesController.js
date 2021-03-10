@@ -18,7 +18,7 @@ exports.createCategory = async (req, res) => {
     res.send(category);
   } catch (err) {
     res.status(500).json({ success: false, error: err });
-    console.log(error);
+    console.log(err);
   }
 };
 
@@ -31,7 +31,7 @@ exports.getCategories = async (req, res) => {
     res.send(categories);
   } catch (err) {
     res.status(500).json({ success: false, error: err });
-    console.log(error);
+    console.log(err);
   }
 };
 
@@ -48,7 +48,7 @@ exports.deleteCategory = async (req, res) => {
     res.status(200).json({ success: true, msg: 'Category deleted!' });
   } catch (err) {
     res.status(500).json({ success: false, error: err });
-    console.log(error);
+    console.log(err);
   }
 };
 
@@ -65,7 +65,7 @@ exports.getCategory = async (req, res) => {
     res.status(200).json({ success: true, category });
   } catch (err) {
     res.status(500).json({ success: false, error: err });
-    console.log(error);
+    console.log(err);
   }
 };
 
@@ -90,6 +90,6 @@ exports.updateCategory = async (req, res) => {
     res.status(200).send(category);
   } catch (err) {
     res.status(500).json({ success: false, error: err });
-    console.log(error);
+    console.log(err);
   }
 };

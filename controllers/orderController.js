@@ -95,3 +95,43 @@ exports.getOrder = async (req, res) => {
     console.log(error);
   }
 };
+
+//@desc     Update Status of orders
+//@route    PUT /api/v1/orders/:id
+//@access   PRIVATE
+exports.updateOrderStatus = async (req, res) => {
+  try {
+    let order = await Order.findByIdAndUpdate(
+      req.params.id,
+      {
+        status: req.body.status,
+      },
+      { new: true }
+    );
+    if (!order) {
+      return res.status(404).json({ msg: 'Order does not exist' });
+    }
+
+    res.status(200).send(order);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err });
+    console.log(err);
+  }
+};
+
+//@desc     Delete  Order
+//@route    DELETE /api/v1/orders/:id
+//@access   PRIVATE
+exports.deleteOrder = async (req, res) => {
+  try {
+    let order = await Order.findByIdAndRemove(req.params.id);
+    if (!order) {
+      return res.status(404).json({ msg: 'Order does not exist' });
+    }
+
+    res.status(200).json({ success: true, msg: 'Order deleted!' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err });
+    console.log(err);
+  }
+};
