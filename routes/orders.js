@@ -1,5 +1,6 @@
 const { Order } = require('../models/order');
 const express = require('express');
+const { createOrder } = require('../controllers/orderController');
 const router = express.Router();
 
 router.get(`/`, async (req, res) => {
@@ -10,5 +11,7 @@ router.get(`/`, async (req, res) => {
   }
   res.send(orderList);
 });
+
+router.route('/').post(createOrder);
 
 module.exports = router;
