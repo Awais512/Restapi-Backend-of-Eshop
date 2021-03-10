@@ -55,3 +55,43 @@ exports.createOrder = async (req, res) => {
     console.log(error);
   }
 };
+
+//@desc     Get all Orders
+//@route    GET /api/v1/orders
+//@access   PRIVATE
+exports.getOrders = async (req, res) => {
+  try {
+    const orderList = await Order.find()
+      .populate('user', 'name')
+      .sort({ dateOrdered: -1 });
+
+    if (!orderList) {
+      res.status(500).json({ success: false });
+    }
+    res.send(orderList);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err });
+    console.log(error);
+  }
+};
+
+//@desc     Get Order
+//@route    GET /api/v1/orders/:id
+//@access   PRIVATE
+exports.getOrder = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id)
+      .populate('user', 'name')
+      .populate({
+        path: 'orderItems',
+        populate: { path: 'product', populate: 'category' },
+      });
+    if (!order) {
+      return res.status(404).send('Order not found');
+    }
+    res.send(order);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err });
+    console.log(error);
+  }
+};

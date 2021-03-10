@@ -1,17 +1,13 @@
 const { Order } = require('../models/order');
 const express = require('express');
-const { createOrder } = require('../controllers/orderController');
+const {
+  createOrder,
+  getOrders,
+  getOrder,
+} = require('../controllers/orderController');
 const router = express.Router();
 
-router.get(`/`, async (req, res) => {
-  const orderList = await Order.find();
-
-  if (!orderList) {
-    res.status(500).json({ success: false });
-  }
-  res.send(orderList);
-});
-
-router.route('/').post(createOrder);
+router.route('/').post(createOrder).get(getOrders);
+router.route('/:id').get(getOrder);
 
 module.exports = router;
