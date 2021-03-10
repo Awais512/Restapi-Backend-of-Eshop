@@ -123,13 +123,82 @@ exports.updateOrderStatus = async (req, res) => {
 //@route    DELETE /api/v1/orders/:id
 //@access   PRIVATE
 exports.deleteOrder = async (req, res) => {
+  Order.findByIdAndRemove(req.params.id)
+    .then(async (order) => {
+      if (order) {
+        await order.orderItems.map(async (orderItem) => {
+          await OrderItem.findByIdAndRemove(orderItem);
+        });
+        return res
+          .status(200)
+          .json({ success: true, message: 'the order is deleted!' });
+      } else {
+        return res
+          .status(404)
+          .json({ success: false, message: 'order not found!' });
+      }
+    })
+    .catch((err) => {
+      return res.status(500).json({ success: false, error: err });
+    });
+};
+
+//@desc     Get total shop sale
+//@route    GET /api/v1/orders/get/totalsales
+//@access   PRIVATE
+exports.getTotalSaleSum = async (req, res) => {
   try {
-    let order = await Order.findByIdAndRemove(req.params.id);
-    if (!order) {
-      return res.status(404).json({ msg: 'Order does not exist' });
+    const totalSales = await Order.aggregate([
+      { $group: { _id: null, totalsales: { $sum: '$totalPrice' } } },
+    ]);
+
+    if (!totalSales) {
+      return res.status(400).send('The order sales cannot be generated');
     }
 
-    res.status(200).json({ success: true, msg: 'Order deleted!' });
+    res.send({ totalsales: totalSales.pop().totalsales });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err });
+    console.log(err);
+  }
+};
+
+//@desc     Get total Orders count
+//@route    GET /api/v1/orders/get/count
+//@access   PRIVATE
+exports.getCountOfOrders = async (req, res) => {
+  try {
+    const orderCount = await Order.countDocuments((count) => count);
+
+    if (!orderCount) {
+      res.status(500).json({ success: false });
+    }
+    res.send({
+      orderCount: orderCount,
+    });
+  } catch (err) {}
+};
+
+//@desc     Get total Orders count
+//@route    GET /api/v1/get/userorders/:userid
+//@access   PRIVATE
+
+exports.getUserOrders = async (req, res) => {
+  try {
+    const userOrderList = await Order.find({ user: req.params.userid })
+      .populate({
+        path: 'orderItems',
+        populate: {
+          path: 'product',
+          populate: 'category',
+        },
+      })
+      .sort({ dateOrdered: -1 });
+
+    if (!userOrderList) {
+      res.status(500).json({ success: false });
+    }
+    res.send(userOrderList);
   } catch (err) {
     res.status(500).json({ success: false, error: err });
     console.log(err);
